@@ -27,7 +27,7 @@ Anyone. Seriously. If you've never written a line of code, you're exactly who th
 ## Free Forever
 
 This curriculum is and will always be free for West Virginians. It's a resource, not a product.
-
----
+[
+](https://m0ntan1.github.io/m0ntan1-vibe-academy/)---
 
 Built by [Montani AI](https://montaniai.org) · Montani Semper Liberi
