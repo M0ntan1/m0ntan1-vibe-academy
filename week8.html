@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Week 8: Build an App with AI Features — Montani AI Vibe Academy</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cabinet+Grotesk:wght@300;400;500;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  --bg: #060810;
+  --surface: #0d1017;
+  --surface2: #131720;
+  --border: #1e2535;
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: #7a5e22;
+  --blue: #2563a8;
+  --blue-light: #5b9bd5;
+  --blue-dim: #1a3d6b;
+  --steel: #3a7ca5;
+  --steel-light: #7fb3d3;
+  --green: #2d9e6b;
+  --green-light: #4dbb8a;
+  --red: #c0392b;
+  --text: #e8ecf4;
+  --muted: #5a6680;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-weight: 400;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+body::before {
+  content:'';
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 5% 0%, rgba(201,168,76,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 95% 90%, rgba(37,99,168,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(58,124,165,0.03) 0%, transparent 60%);
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  position:fixed; left:0; top:0; bottom:0; width:268px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 26px 16px;
+  overflow-y: auto; z-index:20;
+  display:flex; flex-direction:column;
+}
+
+.sidebar-logo {
+  display:flex; align-items:center; gap:10px;
+  margin-bottom: 4px;
+}
+.sidebar-logo-mark {
+  width:34px; height:34px; border-radius:8px; flex-shrink:0;
+  background: linear-gradient(135deg, var(--gold), var(--blue));
+  display:grid; place-items:center;
+  font-family:'Bebas Neue',sans-serif; font-size:16px; color:#fff; letter-spacing:0.05em;
+}
+.sidebar-org {
+  font-family:'Bebas Neue',sans-serif; font-size:1.05rem; letter-spacing:0.08em;
+  color: var(--text); line-height:1.1;
+}
+.sidebar-sub {
+  font-size:9px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase;
+  color: var(--gold); margin-top:1px;
+}
+.sidebar-tagline {
+  font-size:10px; color:var(--muted); margin-bottom:22px; padding-left:44px;
+}
+
+.nav-section-label {
+  font-size:9px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--muted); padding:0 8px; margin:14px 0 5px;
+}
+
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px; border-radius:8px; margin-bottom:2px;
+  text-decoration:none; color:var(--muted); font-size:0.82rem;
+  font-weight:500; border:1px solid transparent; transition:all 0.18s;
+}
+.nav-item:hover { background:var(--surface2); color:var(--text); }
+.nav-item.active {
+  background: rgba(201,168,76,0.10);
+  border-color: rgba(201,168,76,0.25);
+  color: var(--gold-light);
+}
+.nav-item.active.p2 {
+  background: rgba(37,99,168,0.12);
+  border-color: rgba(37,99,168,0.28);
+  color: var(--blue-light);
+}
+.nav-item.active.p3 {
+  background: rgba(58,124,165,0.10);
+  border-color: rgba(58,124,165,0.25);
+  color: var(--steel-light);
+}
+.nav-item.done { color: var(--green-light); }
+.nav-item.done::after { content:'✓'; margin-left:auto; font-size:11px; }
+.nav-icon { font-size:13px; width:18px; text-align:center; flex-shrink:0; }
+.nav-divider { height:1px; background:var(--border); margin:10px 0; }
+
+.sidebar-progress { margin-top:auto; padding-top:18px; border-top:1px solid var(--border); }
+.sp-label { display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-bottom:6px; }
+.sp-bar { height:3px; background:rgba(255,255,255,0.05); border-radius:100px; overflow:hidden; }
+.sp-fill { height:100%; border-radius:100px; background:linear-gradient(90deg,var(--gold),var(--blue-light)); transition:width 0.5s; }
+
+/* ── MAIN ── */
+.main { margin-left:268px; padding:52px 56px 120px; max-width:920px; position:relative; z-index:1; }
+
+/* ── LESSON HEADER ── */
+.lesson-header { margin-bottom:52px; }
+.week-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  border-radius:6px; padding:5px 14px; margin-bottom:16px;
+  font-size:10px; letter-spacing:0.1em; text-transform:uppercase; font-weight:700;
+}
+.week-badge.p1 { background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.25); color:var(--gold-light); }
+.week-badge.p2 { background:rgba(37,99,168,0.1); border:1px solid rgba(37,99,168,0.3); color:var(--blue-light); }
+.week-badge.p3 { background:rgba(58,124,165,0.1); border:1px solid rgba(58,124,165,0.28); color:var(--steel-light); }
+.week-badge.setup { background:rgba(45,158,107,0.1); border:1px solid rgba(45,158,107,0.25); color:var(--green-light); }
+
+h1 {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(2.8rem,5vw,4.2rem); line-height:1.0; letter-spacing:0.03em;
+  margin-bottom:14px;
+  background:linear-gradient(135deg,#fff 0%,var(--gold-light) 50%,var(--blue-light) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+
+.lesson-meta { display:flex; gap:18px; flex-wrap:wrap; font-size:0.82rem; color:var(--muted); margin-bottom:20px; font-weight:500; }
+.intro-text { font-size:1rem; color:rgba(232,236,244,0.7); line-height:1.85; max-width:620px; }
+
+/* ── SECTIONS ── */
+.lesson-section { margin-bottom:60px; scroll-margin-top:28px; }
+.section-number {
+  font-size:9px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:5px;
+}
+
+h2 { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:0.04em; margin-bottom:12px; line-height:1.1; }
+h3 { font-family:'Cabinet Grotesk',sans-serif; font-weight:700; font-size:1.05rem; margin-bottom:10px; }
+p { color:rgba(232,236,244,0.76); margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+strong { color:var(--text); font-weight:700; }
+a { color:var(--gold-light); }
+code {
+  font-family:'Fira Code',monospace; font-size:12px;
+  background:rgba(255,255,255,0.06); border:1px solid var(--border);
+  padding:2px 7px; border-radius:4px; color:var(--gold-light);
+}
+
+/* ── DIAGRAM ── */
+.diagram {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; padding:26px; margin:22px 0;
+}
+.diagram-title {
+  font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:20px; display:flex; align-items:center; gap:10px;
+}
+.diagram-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+.flow { display:flex; align-items:center; flex-wrap:wrap; justify-content:center; gap:0; }
+.flow-step { display:flex; flex-direction:column; align-items:center; gap:8px; min-width:88px; }
+.flow-icon { width:56px; height:56px; border-radius:12px; display:grid; place-items:center; font-size:24px; border:1px solid var(--border); }
+.flow-label { font-size:11px; color:var(--muted); text-align:center; line-height:1.3; font-weight:600; }
+.flow-sub { font-size:9px; color:rgba(90,102,128,0.6); text-align:center; }
+.flow-arrow { font-size:16px; color:var(--border); padding:0 6px; margin-bottom:20px; }
+
+/* ── CODE BLOCKS ── */
+.code-block { background:#07090e; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:18px 0; }
+.code-header {
+  background:var(--surface2); border-bottom:1px solid var(--border);
+  padding:8px 14px; display:flex; align-items:center; gap:7px;
+}
+.code-dot { width:9px; height:9px; border-radius:50%; }
+.code-filename { font-family:'Fira Code',monospace; font-size:11px; color:var(--muted); margin-left:4px; }
+pre { padding:18px 20px; overflow-x:auto; font-family:'Fira Code',monospace; font-size:12.5px; line-height:1.75; }
+.kw{color:#c4b5fd;} .tc{color:#7fb3d3;} .at{color:var(--gold-light);}
+.vl{color:#86efac;} .cm{color:#2a3347;font-style:italic;} .tx{color:#e8ecf4;}
+.st{color:#fda4af;}
+
+/* ── CALLOUTS ── */
+.callout { border-radius:12px; padding:16px 20px; margin:18px 0; display:flex; gap:14px; }
+.callout-tip  { background:rgba(45,158,107,0.07); border:1px solid rgba(45,158,107,0.2); }
+.callout-note { background:rgba(37,99,168,0.07); border:1px solid rgba(37,99,168,0.22); }
+.callout-warn { background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.2); }
+.callout-tool { background:rgba(201,168,76,0.06); border:1px solid rgba(201,168,76,0.18); }
+.callout-wv   { background:rgba(37,99,168,0.08); border-left:3px solid var(--gold); border-radius:0 12px 12px 0; }
+.callout-icon { font-size:18px; flex-shrink:0; margin-top:2px; }
+.callout-body { flex:1; }
+.callout-label {
+  font-size:9px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:4px;
+}
+.callout-tip  .callout-label { color:var(--green-light); }
+.callout-note .callout-label { color:var(--blue-light); }
+.callout-warn .callout-label { color:var(--gold-light); }
+.callout-tool .callout-label { color:var(--gold-light); }
+.callout-wv   .callout-label { color:var(--gold); }
+.callout p { font-size:0.87rem; margin:0; }
+
+/* ── STEPS ── */
+.steps { display:flex; flex-direction:column; gap:12px; margin:18px 0; }
+.step {
+  display:flex; gap:16px; align-items:flex-start;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; padding:16px; transition:border-color 0.18s;
+}
+.step:hover { border-color:rgba(201,168,76,0.25); }
+.step-num {
+  width:28px; height:28px; border-radius:7px; flex-shrink:0;
+  background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.22);
+  color:var(--gold-light); font-weight:800; font-size:12px; display:grid; place-items:center;
+}
+.step-content h4 { font-weight:700; font-size:0.93rem; margin-bottom:4px; }
+.step-content p { margin:0; font-size:0.85rem; color:var(--muted); }
+
+/* ── TRY IT ── */
+.try-it { background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:22px; margin:20px 0; }
+.try-it-badge {
+  display:inline-block; background:rgba(201,168,76,0.12); border:1px solid rgba(201,168,76,0.22);
+  color:var(--gold-light); font-weight:700; font-size:9px; letter-spacing:0.1em; text-transform:uppercase;
+  padding:3px 10px; border-radius:5px; margin-bottom:10px;
+}
+.try-it h3 { font-weight:700; font-size:0.98rem; margin-bottom:8px; }
+.try-it p, .try-it ol, .try-it ul { font-size:0.87rem; color:var(--muted); }
+.try-it ol, .try-it ul { padding-left:18px; }
+.try-it li { margin-bottom:6px; }
+.try-it li strong { color:var(--text); }
+
+/* ── TOOL CARD ── */
+.tool-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:13px; padding:18px 20px; margin-bottom:10px;
+  display:flex; gap:16px; align-items:flex-start; transition:border-color 0.18s;
+}
+.tool-card:hover { border-color:rgba(201,168,76,0.28); }
+.tool-emoji { font-size:26px; flex-shrink:0; }
+.tool-info { flex:1; }
+.tool-name { font-weight:800; font-size:0.97rem; margin-bottom:2px; }
+.tool-desc { font-size:0.83rem; color:var(--muted); margin-bottom:8px; }
+.tool-link {
+  display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:700;
+  letter-spacing:0.06em; text-transform:uppercase; color:var(--gold-light); text-decoration:none;
+  border:1px solid rgba(201,168,76,0.25); border-radius:6px; padding:4px 10px; transition:all 0.18s;
+}
+.tool-link:hover { background:rgba(201,168,76,0.1); }
+
+/* ── PROMPT BOX ── */
+.prompt-box {
+  background:#07090e; border:1px solid rgba(201,168,76,0.22);
+  border-radius:12px; padding:18px 20px; margin:16px 0; position:relative;
+}
+.prompt-box::before {
+  content:'🤖 Prompt to Use';
+  position:absolute; top:-10px; left:14px;
+  background:var(--gold); color:#060810; font-weight:700; font-size:9px;
+  letter-spacing:0.08em; text-transform:uppercase; padding:3px 10px; border-radius:5px;
+}
+.prompt-box p { font-family:'Fira Code',monospace; font-size:11.5px; color:var(--gold-light); line-height:1.8; margin:0; white-space:pre-wrap; }
+
+/* ── EXERCISE ── */
+.exercise {
+  background:linear-gradient(135deg,rgba(201,168,76,0.05),rgba(37,99,168,0.05));
+  border:1px solid rgba(201,168,76,0.16); border-radius:16px; padding:26px; margin:26px 0;
+}
+.exercise-label {
+  font-size:9px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--gold-light); margin-bottom:8px;
+}
+.exercise h3 { font-size:1.08rem; margin-bottom:8px; }
+.exercise p { font-size:0.88rem; }
+.exercise ul { padding-left:18px; color:var(--muted); font-size:0.87rem; margin-top:10px; }
+.exercise ul li { margin-bottom:6px; }
+.exercise ul li strong { color:var(--text); }
+
+/* ── HTML TREE ── */
+.html-tree { font-family:'Fira Code',monospace; font-size:12px; }
+.tree-node { display:flex; align-items:flex-start; margin-bottom:4px; }
+.tree-indent { width:22px; flex-shrink:0; position:relative; }
+.tree-indent::before { content:''; position:absolute; left:10px; top:0; bottom:-4px; width:1px; background:var(--border); }
+.tree-indent::after { content:''; position:absolute; left:10px; top:11px; width:9px; height:1px; background:var(--border); }
+.tree-tag { padding:3px 9px; border-radius:4px; font-size:11px; display:inline-flex; align-items:center; gap:5px; }
+.tag-html { background:rgba(201,168,76,0.12); color:var(--gold-light); border:1px solid rgba(201,168,76,0.2); }
+.tag-head { background:rgba(37,99,168,0.12); color:var(--blue-light); border:1px solid rgba(37,99,168,0.22); }
+.tag-body { background:rgba(45,158,107,0.1); color:var(--green-light); border:1px solid rgba(45,158,107,0.2); }
+.tag-elem { background:rgba(58,124,165,0.1); color:var(--steel-light); border:1px solid rgba(58,124,165,0.2); }
+.tag-desc { font-size:10px; color:var(--muted); margin-left:7px; align-self:center; font-family:'Cabinet Grotesk',sans-serif; }
+
+/* ── DEVTOOLS MOCK ── */
+.devtools-mock { background:#08090f; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:18px 0; }
+.devtools-tabs { display:flex; background:#0a0c14; border-bottom:1px solid var(--border); }
+.devtools-tab { padding:7px 14px; font-size:11px; color:var(--muted); border-right:1px solid var(--border); }
+.devtools-tab.active { color:var(--gold-light); background:#08090f; }
+.devtools-content { padding:14px; font-family:'Fira Code',monospace; font-size:11.5px; line-height:1.85; }
+
+/* ── COMPLETE ── */
+.complete-section {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:16px; padding:30px; text-align:center; margin-top:56px;
+}
+.complete-section h3 { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:0.05em; margin-bottom:6px; }
+.complete-section p { color:var(--muted); font-size:0.87rem; margin-bottom:18px; }
+.btn-complete {
+  display:inline-flex; align-items:center; gap:8px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  border:none; color:#060810; cursor:pointer; font-weight:800; font-size:13px;
+  letter-spacing:0.04em; padding:13px 28px; border-radius:9px; transition:all 0.2s;
+}
+.btn-complete:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(201,168,76,0.25); }
+.btn-complete.done { background:var(--green); color:#fff; cursor:default; transform:none; box-shadow:none; }
+
+.nav-btn-row { display:flex; gap:10px; justify-content:center; margin-top:14px; }
+.nav-btn {
+  display:inline-flex; align-items:center; gap:7px;
+  border:1px solid var(--border); background:transparent; color:var(--muted);
+  font-weight:700; font-size:12px; padding:9px 18px; border-radius:9px;
+  cursor:pointer; text-decoration:none; transition:all 0.18s;
+}
+.nav-btn:hover { border-color:var(--gold-light); color:var(--text); }
+
+/* ── WV CALLOUT special ── */
+.wv-example {
+  background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(37,99,168,0.06));
+  border:1px solid rgba(201,168,76,0.2); border-radius:13px; padding:18px 20px; margin:18px 0;
+}
+.wv-example-label {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:9px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:8px;
+}
+.wv-example p { font-size:0.87rem; color:rgba(232,236,244,0.75); margin:0; }
+
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+@media (max-width:768px) {
+  .sidebar { display:none; }
+  .main { margin-left:0; padding:28px 18px 80px; }
+}
+</style>
+</head>
+<body>
+<aside class="sidebar"><div class="sidebar-logo">
+  <div class="sidebar-logo-mark">M</div>
+  <div><div class="sidebar-org">m0ntan1</div><div class="sidebar-sub">VIBE ACADEMY</div></div>
+</div>
+<div class="sidebar-tagline">montaniai.org</div>
+<a class="nav-item " href="../index.html"><span class="nav-icon">🏠</span> Home</a>
+<a class="nav-item " href="../setup.html"><span class="nav-icon">🛠</span> Setup Day</a>
+<div class="nav-divider"></div>
+<div class="nav-section-label">⛰ Phase 1 — Foundations</div>
+<a class="nav-item nav-week " data-week="1" href="../weeks/week1.html"><span class="nav-icon">W1</span> Internet Basics</a>
+<a class="nav-item nav-week " data-week="2" href="../weeks/week2.html"><span class="nav-icon">W2</span> CSS & Style</a>
+<a class="nav-item nav-week " data-week="3" href="../weeks/week3.html"><span class="nav-icon">W3</span> JavaScript</a>
+<a class="nav-item nav-week " data-week="4" href="../weeks/week4.html"><span class="nav-icon">W4</span> AI Co-Pilot</a>
+<div class="nav-divider"></div>
+<div class="nav-section-label">⚡ Phase 2 — Build Things</div>
+<a class="nav-item nav-week " data-week="5" href="../weeks/week5.html"><span class="nav-icon">W5</span> Your First Site</a>
+<a class="nav-item nav-week " data-week="6" href="../weeks/week6.html"><span class="nav-icon">W6</span> Landing Pages</a>
+<a class="nav-item nav-week " data-week="7" href="../weeks/week7.html"><span class="nav-icon">W7</span> APIs</a>
+<a class="nav-item nav-week active p2" data-week="8" href="../weeks/week8.html"><span class="nav-icon">W8</span> AI Apps</a>
+<div class="nav-divider"></div>
+<div class="nav-section-label">🚀 Phase 3 — Ship It</div>
+<a class="nav-item nav-week " data-week="9" href="../weeks/week9.html"><span class="nav-icon">W9</span> Hybrid Stack</a>
+<a class="nav-item nav-week " data-week="10" href="../weeks/week10.html"><span class="nav-icon">W10</span> Automations</a>
+<a class="nav-item nav-week " data-week="11" href="../weeks/week11.html"><span class="nav-icon">W11</span> Ship a Product</a>
+<a class="nav-item nav-week " data-week="12" href="../weeks/week12.html"><span class="nav-icon">W12</span> What's Next</a>
+<div class="nav-divider"></div>
+<div class="sidebar-progress">
+  <div class="sp-label"><span>Your progress</span><span id="sp-label">0 / 12</span></div>
+  <div class="sp-bar"><div class="sp-fill" id="sp-fill" style="width:0%"></div></div>
+</div></aside>
+<main class="main">
+<div class="lesson-header">
+  <div class="week-badge p2">⚡ Phase 2 — Build Things · Week 8</div>
+  <h1>Build an App with AI Features</h1>
+  <div class="lesson-meta">
+    <span>⏱ ~5 hours</span>
+    <span>📚 4 lessons</span>
+    <span>🛠 Replit · Anthropic API · Claude AI</span>
+  </div>
+  <p class="intro-text">You've been using Claude through the website. This week you call Claude's API directly from your own code — so you can build apps that have AI built in. A customer service bot for a WV small business. A study helper for WV students.</p>
+</div>
+<h1>Build an App with AI Features</h1>
+  <div class="lesson-meta">
+    <span>⏱ ~5 hours</span>
+    <span>📚 4 lessons</span>
+    <span>🛠 Replit · Anthropic API · Claude AI</span>
+  </div>
+  <p class="intro-text">Call the Claude API from your own app. Build a chatbot with a real personality, deployed and shareable.</p>
+</div>
+
+
+<div class="lesson-section" id="l1">
+  <div class="section-number">Lesson 1 of 4</div>
+  <h2>🧠 How AI APIs Work</h2>
+  <p>You've been using Claude through the website. Now you're going to call Claude (or OpenAI) directly from your own code — so your app can generate text, answer questions, and respond to users in real time.</p>
+  <div class="diagram">
+    <div class="diagram-title">🤖 Your app talks to Claude's API</div>
+    <div class="flow">
+      <div class="flow-step"><div class="flow-icon" style="background:rgba(124,58,237,0.12);border-color:rgba(124,58,237,0.3)">👤</div><div class="flow-label">User types</div><div class="flow-sub">In your app</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-icon" style="background:rgba(6,182,212,0.12);border-color:rgba(6,182,212,0.3)">⚡</div><div class="flow-label">Your Code</div><div class="flow-sub">Sends to Claude API</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-icon" style="background:rgba(245,158,11,0.12);border-color:rgba(245,158,11,0.3)">🤖</div><div class="flow-label">Claude API</div><div class="flow-sub">Generates response</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-icon" style="background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.3)">💬</div><div class="flow-label">Response</div><div class="flow-sub">Shown to user</div></div>
+    </div>
+  </div>
+  <div class="callout callout-tool">
+    <span class="callout-icon">🔑</span>
+    <div class="callout-body"><div class="callout-label">Getting your Claude API key</div>
+    <p>Go to <a href="https://console.anthropic.com" target="_blank" style="color:var(--gold-light)">console.anthropic.com</a> → create account → API Keys → Create Key. Copy it somewhere safe. This is different from your claude.ai login — it's specifically for calling Claude from code.</p></div>
+  </div>
+</div>
+
+<div class="lesson-section" id="l2">
+  <div class="section-number">Lesson 2 of 4</div>
+  <h2>💬 Building the Chat Interface</h2>
+  <p>A chat interface is just: a text input, a send button, and a message list that updates. The AI call is just a fetch() request — you learned this last week.</p>
+  <div class="callout callout-note">
+    <span class="callout-icon">💻</span>
+    <div class="callout-body"><div class="callout-label">Use Replit this week</div>
+    <p>AI API calls need to happen server-side to keep your key safe. Open <a href="https://replit.com" target="_blank" style="color:var(--gold-light)">replit.com</a> (you set this up in Setup Day) → New Repl → Node.js. This gives you a free server environment in your browser.</p></div>
+  </div>
+  <div class="prompt-box">
+    <p>Build me a chatbot app using the Anthropic Claude API in Replit (Node.js).
+My API key: [YOUR KEY — store it as a Replit secret called ANTHROPIC_KEY]
+The chatbot should have this personality: [describe your bot — e.g., "a sarcastic movie critic"]
+System prompt: [describe the bot's rules and personality in detail]
+Build: a clean chat UI (HTML/CSS), a Node.js server that calls the Claude API, message history so context is maintained.
+I'm a beginner — explain each file's purpose with comments.</p>
+  </div>
+</div>
+
+<div class="lesson-section" id="l3">
+  <div class="section-number">Lesson 3 of 4</div>
+  <h2>⚡ System Prompts: Give Your AI a Personality</h2>
+  <p>A system prompt is a set of instructions you give Claude before the conversation starts. It defines the AI's role, knowledge, tone, and rules. This is what turns a generic chatbot into something unique.</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot" style="background:#f43f5e"></div><div class="code-dot" style="background:#f59e0b"></div><div class="code-dot" style="background:#10b981"></div><span class="code-filename">system-prompt examples</span></div>
+    <pre><span class="cm">// A cooking assistant</span>
+<span class="tx">"You are Chef Marco, an enthusiastic Italian chef. You only talk about food,
+recipes, and cooking techniques. Always suggest an Italian dish as an example.
+Keep responses under 150 words. End every message with a relevant food emoji."</span>
+
+<span class="cm">// A study buddy</span>
+<span class="tx">"You are a patient tutor helping a high school student. Ask questions back
+to check understanding rather than just giving answers. Use simple language.
+Never do homework for them — guide them to the answer instead."</span></pre>
+  </div>
+  <div class="prompt-box">
+    <p>Write a detailed system prompt for a [type] chatbot that:
+- Has this personality: [describe]
+- Knows about: [topics]
+- Should NOT: [limitations]
+- Responds in this style: [tone/format]
+Make it specific enough that the AI has a clear, consistent character.</p>
+  </div>
+</div>
+
+<div class="lesson-section" id="l4">
+  <div class="section-number">Lesson 4 of 4</div>
+  <h2>🔑 Environment Variables: Keeping Keys Safe</h2>
+  <p>Replit has a "Secrets" feature — environment variables that your code can read but that don't appear in your code files. This is how you keep API keys private.</p>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-content"><h4>In Replit: open the Secrets panel</h4><p>Click the 🔒 padlock icon in the left sidebar. This is your encrypted secrets store.</p></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><h4>Add your API key as a secret</h4><p>Key: <code>ANTHROPIC_KEY</code> · Value: your actual API key. Click "Add new secret."</p></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><h4>Access it in code with <code>process.env</code></h4><p><code>const key = process.env.ANTHROPIC_KEY</code> — reads the secret without it ever appearing in your code. Safe to share the code now.</p></div></div>
+  </div>
+</div>
+
+<div class="lesson-section" id="project">
+  <div class="section-number">🏗 Week 8 Project</div>
+  <h2>Your Custom AI Chatbot — Live &amp; Shareable</h2>
+  <div class="exercise">
+    <div class="exercise-label">Build This</div>
+    <h3>A themed AI chatbot, built on Claude API, deployed on Replit</h3>
+    <p>Make it something you'd actually use or show off — give it a strong personality and a clear purpose.</p>
+    <ul>
+      <li>A well-crafted <strong>system prompt</strong> with a clear personality</li>
+      <li>A <strong>chat interface</strong> that looks polished</li>
+      <li>Maintains <strong>conversation history</strong> (context across messages)</li>
+      <li>API key stored safely in <strong>Replit Secrets</strong></li>
+      <li>The Replit URL is live and <strong>shareable with anyone</strong></li>
+    </ul>
+  </div>
+</div>
+<div class="complete-section">
+  <h3>Week 8 Done!</h3>
+  <p>Mark it complete and keep your momentum going.</p>
+  <button class="btn-complete" id="completeBtn" onclick="markWeekComplete(8)">✓ Mark Week 8 Complete</button>
+  <div class="nav-btn-row"><a class="nav-btn" href="../weeks/week7.html">← Week 7</a><a class="nav-btn" href="../weeks/week9.html">Week 9 →</a></div>
+</div>
+</main>
+<script>// ── Progress tracking ──────────────────────────────────────────
+const TOTAL_WEEKS = 12;
+const STORAGE_KEY = 'vibe-dev-completed';
+
+function getCompleted() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+}
+
+function saveCompleted(arr) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); } catch {}
+}
+
+function markWeekComplete(weekNum) {
+  const c = getCompleted();
+  if (!c.includes(weekNum)) { c.push(weekNum); saveCompleted(c); }
+  const btn = document.getElementById('completeBtn');
+  if (btn) { btn.textContent = '🎉 Week ' + weekNum + ' Complete!'; btn.classList.add('done'); btn.disabled = true; }
+  updateSidebarProgress();
+}
+
+function updateSidebarProgress() {
+  const c = getCompleted();
+  const pct = (c.length / TOTAL_WEEKS) * 100;
+  const fill = document.getElementById('sp-fill');
+  const label = document.getElementById('sp-label');
+  if (fill) fill.style.width = pct + '%';
+  if (label) label.textContent = c.length + ' / ' + TOTAL_WEEKS + ' complete';
+  // Mark nav items done
+  document.querySelectorAll('.nav-week').forEach(el => {
+    const w = parseInt(el.dataset.week);
+    if (c.includes(w)) el.classList.add('done');
+    else el.classList.remove('done');
+  });
+}
+
+// ── Scroll-spy for lesson nav ──────────────────────────────────
+function initScrollSpy(sectionIds) {
+  const navLinks = document.querySelectorAll('.lesson-nav-item');
+  if (!navLinks.length) return;
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const match = document.querySelector('.lesson-nav-item[href="#' + e.target.id + '"]');
+        if (match) match.classList.add('active');
+      }
+    });
+  }, { threshold: 0.35 });
+
+  sectionIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+}
+
+// ── Sidebar active week ────────────────────────────────────────
+function setActiveSidebarWeek(weekNum) {
+  document.querySelectorAll('.nav-week').forEach(el => {
+    el.classList.remove('active', 'p2', 'p3');
+  });
+  const target = document.querySelector('.nav-week[data-week="' + weekNum + '"]');
+  if (target) {
+    target.classList.add('active');
+    if (weekNum >= 5 && weekNum <= 8) target.classList.add('p2');
+    if (weekNum >= 9) target.classList.add('p3');
+  }
+}
+
+// ── Check if this week is already complete and update btn ──────
+function initCompleteBtnState(weekNum) {
+  const c = getCompleted();
+  const btn = document.getElementById('completeBtn');
+  if (btn && c.includes(weekNum)) {
+    btn.textContent = '🎉 Week ' + weekNum + ' Complete!';
+    btn.classList.add('done');
+    btn.disabled = true;
+  }
+}
+
+// ── Run on every page ──────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  updateSidebarProgress();
+});
+
+updateSidebarProgress();
+
+</script>
+</body>
+</html>
